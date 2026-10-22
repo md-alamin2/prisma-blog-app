@@ -7,7 +7,7 @@ const createPost = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "Post created successfully",
-      result: result,
+      data: result,
     });
   } catch (err: any) {
     res.status(400).json({
@@ -17,6 +17,23 @@ const createPost = async (req: Request, res: Response) => {
   }
 };
 
+const getAllPost = async (req: Request, res: Response) => {
+  try {
+    const result = await postService.getAllPost();
+    res.status(200).json({
+      success: true,
+      message: "Get all post",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 export const postController = {
   createPost,
+  getAllPost,
 };
