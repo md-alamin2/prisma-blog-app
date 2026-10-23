@@ -17,6 +17,7 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "sqlite", ...etc
   }),
+
   trustedOrigins: [process.env.APP_URL!],
   user: {
     additionalFields: {
@@ -36,11 +37,13 @@ export const auth = betterAuth({
       },
     },
   },
+
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: true,
   },
+
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
       const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
@@ -145,6 +148,13 @@ The Prisma Blog Team
       });
 
       console.log("Message sent: %s", info.messageId);
+    },
+  },
+
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
 });
