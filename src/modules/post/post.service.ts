@@ -1,3 +1,4 @@
+import { boolean } from "better-auth";
 import { Post } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
@@ -17,31 +18,36 @@ const createPost = async (
 };
 
 // get all post service logic
-const getAllPost = async (payload: {
+const getAllPost = async ({
+  search,
+  tags,
+  isFeatured,
+}: {
   search: string | undefined;
   tags: string[];
+  isFeatured: boolean;
 }) => {
   const allFilters: PostWhereInput[] = [];
 
   // adding search value
-  if (payload.search !== undefined) {
+  if (search !== undefined) {
     allFilters.push({
       OR: [
         {
           title: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive",
           },
         },
         {
           content: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "default",
           },
         },
         {
           tags: {
-            has: payload.search as string,
+            has: search as string,
           },
         },
       ],
@@ -49,12 +55,17 @@ const getAllPost = async (payload: {
   }
 
   // adding tags value
-  if (payload.tags.length > 0) {
+  if (tags.length > 0) {
     allFilters.push({
       tags: {
-        hasEvery: payload.tags,
+        hasEvery: tags,
       },
     });
+  }
+
+  // adding isFeatured value
+  if (typeof isFeatured === "boolean") {
+    allFilters.push({ isFeatured });
   }
 
   const result = await prisma.post.findMany({
