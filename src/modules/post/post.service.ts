@@ -1,5 +1,5 @@
 import { boolean } from "better-auth";
-import { Post } from "../../../generated/prisma/client";
+import { Post, PostStatus } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -22,10 +22,14 @@ const getAllPost = async ({
   search,
   tags,
   isFeatured,
+  status,
+  authorId,
 }: {
   search: string | undefined;
   tags: string[];
   isFeatured: boolean | undefined;
+  status: PostStatus | undefined;
+  authorId: string | undefined;
 }) => {
   const allFilters: PostWhereInput[] = [];
 
@@ -68,6 +72,17 @@ const getAllPost = async ({
     allFilters.push({ isFeatured });
   }
 
+  // adding status value
+  if (status) {
+    allFilters.push({ status });
+  }
+
+  // adding authorId value
+  if (authorId) {
+    allFilters.push({ authorId });
+  }
+
+  // result function
   const result = await prisma.post.findMany({
     where: {
       AND: allFilters,
