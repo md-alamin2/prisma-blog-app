@@ -25,7 +25,10 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPost = async (req: Request, res: Response) => {
   try {
-    const result = await postService.getAllPost();
+    const { search } = req.query;
+    const searchString = typeof search === "string" ? search : undefined;
+    const tags = req.query.tags? (req.query.tags as string).split(","): [];
+    const result = await postService.getAllPost({ search: searchString, tags });
     res.status(200).json({
       success: true,
       message: "Get all post",
