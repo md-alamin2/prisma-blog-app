@@ -24,12 +24,16 @@ const getAllPost = async ({
   isFeatured,
   status,
   authorId,
+  page,
+  limit,
 }: {
   search: string | undefined;
   tags: string[];
   isFeatured: boolean | undefined;
   status: PostStatus | undefined;
   authorId: string | undefined;
+  page: number;
+  limit: number;
 }) => {
   const allFilters: PostWhereInput[] = [];
 
@@ -82,8 +86,13 @@ const getAllPost = async ({
     allFilters.push({ authorId });
   }
 
+  // pagination skip calculation
+  const skipPost = (page - 1) * limit;
+
   // result function
   const result = await prisma.post.findMany({
+    skip: skipPost,
+    take: limit,
     where: {
       AND: allFilters,
     },
