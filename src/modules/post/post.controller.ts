@@ -50,7 +50,9 @@ const getAllPost = async (req: Request, res: Response) => {
     const authorId = req.query.authorId as string | undefined;
 
     // pagination and sorting helper function
-    const {page, limit, skip, sortBy, sortOrder} = paginationSortingHelper(req.query)
+    const { page, limit, skip, sortBy, sortOrder } = paginationSortingHelper(
+      req.query,
+    );
 
     // calling the get data function
     const result = await postService.getAllPost({
@@ -63,7 +65,7 @@ const getAllPost = async (req: Request, res: Response) => {
       limit,
       skip,
       sortBy,
-      sortOrder
+      sortOrder,
     });
     res.status(200).json({
       success: true,
@@ -78,7 +80,28 @@ const getAllPost = async (req: Request, res: Response) => {
   }
 };
 
+const getSinglePost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
+    if (!postId) {
+      throw new Error("please add an valid id");
+    }
+    const result = await postService.getSinglePost(postId as string);
+    res.status(200).json({
+      success: true,
+      message: "Post get successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPost,
+  getSinglePost,
 };
