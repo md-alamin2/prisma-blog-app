@@ -26,6 +26,8 @@ const getAllPost = async ({
   authorId,
   page,
   limit,
+  sortBy,
+  sortOrder,
 }: {
   search: string | undefined;
   tags: string[];
@@ -34,6 +36,8 @@ const getAllPost = async ({
   authorId: string | undefined;
   page: number;
   limit: number;
+  sortBy: string | undefined;
+  sortOrder: string | undefined;
 }) => {
   const allFilters: PostWhereInput[] = [];
 
@@ -96,6 +100,12 @@ const getAllPost = async ({
     where: {
       AND: allFilters,
     },
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : { createdAt: "asc" },
   });
   return result;
 };

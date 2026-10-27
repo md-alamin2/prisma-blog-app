@@ -52,6 +52,10 @@ const getAllPost = async (req: Request, res: Response) => {
     const page = Number(req.query.page ?? 1)
     const limit = Number(req.query.limit ?? 8)
 
+    // for sorting
+    const sortBy = req.query.sortBy as string | undefined
+    const sortOrder = req.query.sortOrder as string | undefined
+
     // calling the get data function
     const result = await postService.getAllPost({
       search: searchString,
@@ -60,7 +64,9 @@ const getAllPost = async (req: Request, res: Response) => {
       status,
       authorId,
       page,
-      limit
+      limit,
+      sortBy,
+      sortOrder
     });
     res.status(200).json({
       success: true,
