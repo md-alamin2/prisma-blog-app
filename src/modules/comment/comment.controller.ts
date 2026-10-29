@@ -56,8 +56,55 @@ const createComment = async (req: Request, res: Response) => {
   }
 };
 
+const updateComment = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { commentId } = req.params;
+    const result = await commentService.updateComment(
+      commentId as string,
+      user?.id as string,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Comment update successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error,
+    });
+  }
+};
+
+const deleteComment = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { commentId } = req.params;
+    const result = await commentService.deleteComment(
+      commentId as string,
+      user?.id as string,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Comment deleted successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error,
+    });
+  }
+};
+
 export const commentController = {
   createComment,
   getCommentById,
-  getCommentByAuthorId
+  getCommentByAuthorId,
+  updateComment,
+  deleteComment,
 };
