@@ -18,6 +18,26 @@ const getCommentById = async (req: Request, res: Response) => {
   }
 };
 
+const getCommentByAuthorId = async (req: Request, res: Response) => {
+  try {
+    const { authorId } = req.params;
+    const result = await commentService.getCommentByAuthorId(
+      authorId as string,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Comment get successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: error,
+    });
+  }
+};
+
 const createComment = async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -38,5 +58,6 @@ const createComment = async (req: Request, res: Response) => {
 
 export const commentController = {
   createComment,
-  getCommentById
+  getCommentById,
+  getCommentByAuthorId
 };

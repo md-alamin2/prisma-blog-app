@@ -6,6 +6,8 @@ const router = Router();
 
 router.get("/:commentId", commentController.getCommentById);
 
+router.get("/author/:authorId", commentController.getCommentByAuthorId);
+
 router.post(
   "/",
   verifyRole(UserRole.USER, UserRole.ADMIN),
