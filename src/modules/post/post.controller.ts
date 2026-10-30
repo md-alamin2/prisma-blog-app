@@ -92,10 +92,10 @@ const getSinglePost = async (req: Request, res: Response) => {
       message: "Post get successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error.message,
+      message: err.message,
     });
   }
 };

@@ -118,11 +118,19 @@ const deleteComment = async (commentId: string, authorId: string) => {
 };
 
 const moderateComment = async (commentId: string, data: CommentStatus) => {
-  await prisma.comment.findUniqueOrThrow({
+  const ifCommentExists = await prisma.comment.findUniqueOrThrow({
     where: {
       id: commentId,
     },
+    select: {
+      id: true,
+      status: true,
+    },
   });
+
+  if (ifCommentExists.status === data) {
+    throw new Error(`Your provided type(${data}) already exists`);
+  }
 
   const result = await prisma.comment.update({
     where: {

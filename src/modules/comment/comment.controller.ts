@@ -10,10 +10,10 @@ const getCommentById = async (req: Request, res: Response) => {
       message: "Comment get successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: err.message,
     });
   }
 };
@@ -30,10 +30,10 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
       message: "Comment get successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: err.message,
     });
   }
 };
@@ -48,10 +48,10 @@ const createComment = async (req: Request, res: Response) => {
       message: "Comment created successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: err.message,
     });
   }
 };
@@ -71,10 +71,10 @@ const updateComment = async (req: Request, res: Response) => {
       message: "Comment update successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: err.message,
     });
   }
 };
@@ -93,10 +93,10 @@ const deleteComment = async (req: Request, res: Response) => {
       message: "Comment deleted successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: err.message,
     });
   }
 };
@@ -113,10 +113,10 @@ const moderateComment = async (req: Request, res: Response) => {
       message: "Comment status update successfully",
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: err.message,
     });
   }
 };
