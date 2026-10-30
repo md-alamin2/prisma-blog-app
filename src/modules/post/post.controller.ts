@@ -100,8 +100,29 @@ const getSinglePost = async (req: Request, res: Response) => {
   }
 };
 
+const getMyPost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("Forbidden access");
+    }
+    const result = await postService.getMyPost(user.id as string);
+    res.status(200).json({
+      success: true,
+      message: "Your post get successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPost,
   getSinglePost,
+  getMyPost
 };

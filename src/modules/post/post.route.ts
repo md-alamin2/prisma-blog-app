@@ -6,6 +6,12 @@ const router = Router();
 
 router.get("/", postController.getAllPost);
 
+router.get(
+  "/my-post",
+  verifyRole(UserRole.ADMIN, UserRole.USER),
+  postController.getMyPost,
+);
+
 router.get("/:postId", postController.getSinglePost);
 
 router.post(
