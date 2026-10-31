@@ -178,18 +178,36 @@ const getSinglePost = async (postId: string) => {
 
 // get my post
 const getMyPost = async (id: string) => {
+  await prisma.user.findFirstOrThrow({
+    where: {
+      id,
+      status: "ACTIVE",
+    },
+    select: {
+      id: true,
+    },
+  });
+
   const result = await prisma.post.findMany({
     where: {
       authorId: id,
     },
+    orderBy: { createdAt: "asc" },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
   });
 
-  return result
+  return result;
 };
 
 export const postService = {
   createPost,
   getAllPost,
   getSinglePost,
-  getMyPost
+  getMyPost,
 };
