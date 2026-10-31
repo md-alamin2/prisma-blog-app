@@ -240,14 +240,18 @@ const updatePost = async (
     data,
   });
 
-  return result
+  return result;
 };
 
 // **
 // delete post
 // user=> can only delete own posts not others
 // admin=> can delete every post*/
-const deletePost = async(postId: string, authorId: string, isAdmin: boolean)=>{
+const deletePost = async (
+  postId: string,
+  authorId: string,
+  isAdmin: boolean,
+) => {
   const ifValidPost = await prisma.post.findUniqueOrThrow({
     where: {
       id: postId,
@@ -263,13 +267,57 @@ const deletePost = async(postId: string, authorId: string, isAdmin: boolean)=>{
   }
 
   const result = await prisma.post.delete({
-    where:{
-      id: postId
-    }
-  })
+    where: {
+      id: postId,
+    },
+  });
 
-  return result
-}
+  return result;
+};
+
+const getStatistics = async () => {
+  return await prisma.$transaction(async (tx) => {
+    const [
+      totalPost,
+      totalPublishedPost,
+      totalDraftPost,
+      totalArchivedPost,
+      totalComment,
+      totalApprovedComment,
+      totalRejectComment,
+      allUserCount,
+      totalUser,
+      totalAdmin,
+      totalViewsCount,
+    ] = await Promise.all([
+      await tx.post.count(),
+      await tx.post.count({ where: { status: PostStatus.PUBLISHED } }),
+      await tx.post.count({ where: { status: PostStatus.DRAFT } }),
+      await tx.post.count({ where: { status: PostStatus.ARCHIVED } }),
+      await tx.comment.count(),
+      await tx.comment.count({ where: { status: CommentStatus.APPROVED } }),
+      await tx.comment.count({ where: { status: CommentStatus.REJECT } }),
+      await tx.user.count(),
+      await tx.user.count({ where: { role: "USER" } }),
+      await tx.user.count({ where: { role: "ADMIN" } }),
+      await tx.post.aggregate({ _sum: { views: true } }),
+    ]);
+
+    return {
+      totalPost,
+      totalPublishedPost,
+      totalDraftPost,
+      totalArchivedPost,
+      totalComment,
+      totalApprovedComment,
+      totalRejectComment,
+      allUserCount,
+      totalUser,
+      totalAdmin,
+      totalViewsCount,
+    };
+  });
+};
 
 export const postService = {
   createPost,
@@ -277,5 +325,6 @@ export const postService = {
   getSinglePost,
   getMyPost,
   updatePost,
-  deletePost
+  deletePost,
+  getStatistics,
 };

@@ -4,6 +4,12 @@ import verifyRole, { UserRole } from "../../middleware/verifyRole";
 
 const router = Router();
 
+router.get(
+  "/statistics",
+  verifyRole(UserRole.ADMIN),
+  postController.getStatistics,
+);
+
 router.get("/", postController.getAllPost);
 
 router.get(
