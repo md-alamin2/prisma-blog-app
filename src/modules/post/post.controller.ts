@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../helpers/paginationSortingHelper";
+import { UserRole } from "../../middleware/verifyRole";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -120,9 +121,37 @@ const getMyPost = async (req: Request, res: Response) => {
   }
 };
 
+const updatePost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
+    const user = req.user;
+    if (!user) {
+      throw new Error("Forbidden access");
+    }
+    const isAdmin = user.role === UserRole.ADMIN
+    const result = await postService.updatePost(
+      postId as string,
+      req.body,
+      user.id,
+      isAdmin
+    );
+    res.status(200).json({
+      success: true,
+      message: "Your post get successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPost,
   getSinglePost,
-  getMyPost
+  getMyPost,
+  updatePost
 };

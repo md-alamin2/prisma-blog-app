@@ -205,9 +205,48 @@ const getMyPost = async (id: string) => {
   return result;
 };
 
+// update post
+// *
+// User=> can update only his post without isFeatured field
+// Admin=> can update any post and any field*/
+const updatePost = async (
+  postId: string,
+  data: Partial<Post>,
+  authorId: string,
+  isAdmin: boolean,
+) => {
+  const ifValidPost = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+
+  if (!isAdmin && ifValidPost.authorId !== authorId) {
+    throw new Error("You aren't creator/owner of this post");
+  }
+
+  if (!isAdmin) {
+    delete data.isFeatured;
+  }
+
+  const result = await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data,
+  });
+
+  return result
+};
+
 export const postService = {
   createPost,
   getAllPost,
   getSinglePost,
   getMyPost,
+  updatePost,
 };
