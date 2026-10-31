@@ -137,7 +137,33 @@ const updatePost = async (req: Request, res: Response) => {
     );
     res.status(200).json({
       success: true,
-      message: "Your post get successfully",
+      message: "Post updated successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const deletePost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
+    const user = req.user;
+    if (!user) {
+      throw new Error("Forbidden access");
+    }
+    const isAdmin = user.role === UserRole.ADMIN
+    const result = await postService.deletePost(
+      postId as string,
+      user.id,
+      isAdmin
+    );
+    res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
       data: result,
     });
   } catch (err: any) {
@@ -153,5 +179,6 @@ export const postController = {
   getAllPost,
   getSinglePost,
   getMyPost,
-  updatePost
+  updatePost,
+  deletePost
 };

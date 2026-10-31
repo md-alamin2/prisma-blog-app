@@ -243,10 +243,39 @@ const updatePost = async (
   return result
 };
 
+// **
+// delete post
+// user=> can only delete own posts not others
+// admin=> can delete every post*/
+const deletePost = async(postId: string, authorId: string, isAdmin: boolean)=>{
+  const ifValidPost = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+
+  if (!isAdmin && ifValidPost.authorId !== authorId) {
+    throw new Error("You aren't creator/owner of this post");
+  }
+
+  const result = await prisma.post.delete({
+    where:{
+      id: postId
+    }
+  })
+
+  return result
+}
+
 export const postService = {
   createPost,
   getAllPost,
   getSinglePost,
   getMyPost,
   updatePost,
+  deletePost
 };
